@@ -4,10 +4,10 @@
 USER_NAME=$(whoami)
 
 # Check if the user's Nix profile exists; if not, switch to 'deck'
-if [ ! -f "/home/$USER_NAME/.nix-profile/etc/profile.d/nix.sh" ]; then
-    echo "Nix profile not found for $USER_NAME, switching to 'deck'"
-    USER_NAME="deck"
-fi
+#if [ ! -f "/home/$USER_NAME/.nix-profile/etc/profile.d/nix.sh" ]; then
+#    echo "Nix profile not found for $USER_NAME, switching to 'deck'"
+#    USER_NAME="deck"
+#fi
 
 # Ensure the user has permission to write to the /nix directory
 sudo chown -R "$USER_NAME" /nix
