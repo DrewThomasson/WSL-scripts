@@ -1,0 +1,66 @@
+#!/bin/bash
+
+echo "This script was tested on WSL Ubuntu 18.04"
+
+# Check if CUDA is installed by checking for nvcc
+if ! command -v nvcc &> /dev/null; then
+    echo "CUDA is not installed or nvcc is not found. Proceeding with installation of CUDA 10.2..."
+else
+    # Check the current CUDA version
+    echo "Checking the current CUDA version..."
+    cuda_version=$(nvcc --version | grep -oP 'release \K[0-9]+\.[0-9]+')
+
+    if [ "$cuda_version" == "10.2" ]; then
+        echo "CUDA 10.2 is already installed."
+        exit 0
+    else
+        echo "Current CUDA version: $cuda_version. Downgrading to CUDA 10.2..."
+    fi
+fi
+
+# Remove any existing CUDA versions
+sudo apt-get --purge remove "*cublas*" "cuda*" "nsight*" "*npp*" "libcudnn*" -y
+sudo apt-get autoremove -y
+sudo apt-get clean
+
+# Manually add NVIDIA's repository key (updating for current key)
+sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub
+
+# Add CUDA repository for Ubuntu 18.04
+sudo sh -c 'echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/ /" > /etc/apt/sources.list.d/cuda.list'
+
+# Update package lists
+sudo apt-get update
+
+# Install CUDA 10.2
+sudo apt-get install -y cuda-10-2
+
+# Install the CUDA toolkit which includes nvcc
+sudo apt-get install -y nvidia-cuda-toolkit
+
+# Set the correct CUDA 10.2 path
+echo "Setting the correct CUDA 10.2 path..."
+export PATH=/usr/local/cuda-10.2/bin${PATH:+:${PATH}}
+export LD_LIBRARY_PATH=/usr/local/cuda-10.2/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+
+# Check the nvcc version
+echo "Checking the nvcc version..."
+nvcc --version
+
+# Persist environment variables
+echo 'export PATH=/usr/local/cuda-10.2/bin${PATH:+:${PATH}}' >> ~/.bashrc
+echo 'export LD_LIBRARY_PATH=/usr/local/cuda-10.2/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}' >> ~/.bashrc
+source ~/.bashrc
+
+# Verify installation
+echo "Verifying CUDA 10.2 installation..."
+if command -v nvcc &> /dev/null; then
+    cuda_version=$(nvcc --version | grep -oP 'release \K[0-9]+\.[0-9]+')
+    if [ "$cuda_version" == "10.2" ]; then
+        echo "CUDA 10.2 successfully installed."
+    else
+        echo "CUDA installation failed. Current version: $cuda_version"
+    fi
+else
+    echo "CUDA installation failed, nvcc is not found."
+fi
