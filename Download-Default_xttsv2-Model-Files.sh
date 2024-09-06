@@ -8,6 +8,9 @@ MODEL_DIR="$HOME/.local/share/tts/tts_models--multilingual--multi-dataset--xtts_
 # Check the size of the model directory before downloading
 du -sh "$MODEL_DIR"
 
+# Wipe xtts dir (keep the directory, remove its contents)
+rm -rf "$MODEL_DIR"/*
+
 # Change to the model directory
 cd "$MODEL_DIR" || exit
 
