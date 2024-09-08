@@ -48,5 +48,8 @@ if [ -f ~/.nix-profile/etc/profile.d/nix.sh ]; then
 fi
 
 
-
 echo "Nix installation and configuration complete."
+echo "To install packages with nix use:"
+echo "nix-env -iA nixpkgs.htop"
+echo "To uninstall packages with nix use:"
+echo "nix-env -e package_name"
