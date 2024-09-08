@@ -1,7 +1,33 @@
 #!/bin/bash
 
+# Function to calculate the available disk space in KB
+get_disk_usage_kb() {
+    df / | grep -E "/$" | awk '{print $4}'
+}
+
+# Convert from KB to MB
+convert_to_mb() {
+    echo $(( $1 / 1024 ))
+}
+
 # Get the current username
 USER_NAME=$(whoami)
+
+# Get initial disk usage
+initial_space_kb=$(get_disk_usage_kb)
+initial_space_mb=$(convert_to_mb $initial_space_kb)
+echo "Available space before installation: $initial_space_mb MB"
+
+# Estimate the space required (Nix installation is typically 5000 MB)
+required_space="533"
+echo "The Nix installation will require approximately $required_space MB of space."
+
+# Ask the user for confirmation
+read -p "Do you want to proceed with the installation? (y/n): " confirm
+if [[ $confirm != "y" ]]; then
+    echo "Installation canceled."
+    exit 0
+fi
 
 # Ensure the /nix directory exists before attempting to change ownership
 if [ ! -d "/nix" ]; then
@@ -32,43 +58,18 @@ else
     echo "Nix installed successfully: $(nix --version)"
 fi
 
-# Create Nix configuration file to allow unfree packages
-mkdir -p ~/.config/nixpkgs
-echo "{ allowUnfree = true; }" > ~/.config/nixpkgs/config.nix
+# Get final disk usage
+final_space_kb=$(get_disk_usage_kb)
+final_space_mb=$(convert_to_mb $final_space_kb)
+echo "Available space after installation: $final_space_mb MB"
 
-# Export XDG_DATA_DIRS to include .nix-profile in .bashrc, .bash_profile, and .zshrc
-for file in ~/.bashrc ~/.bash_profile ~/.zshrc; do
-    if [ -f "$file" ]; then
-        if ! grep -q "XDG_DATA_DIRS" "$file"; then
-            echo "Adding XDG_DATA_DIRS to $file"
-            echo "export XDG_DATA_DIRS=\"/home/$USER_NAME/.nix-profile/share\"" >> "$file"
-            source "$file"
-        else
-            echo "XDG_DATA_DIRS already present in $file"
-        fi
-    fi
-done
-
-# Create and link vscode desktop file if it doesn't already exist
-mkdir -p ~/.local/share/applications
-if [ ! -f ~/.local/share/applications/code.desktop ]; then
-    ln -s "/home/$USER_NAME/.nix-profile/share/applications/code.desktop" ~/.local/share/applications/
-    chmod +x ~/.local/share/applications/code.desktop
-else
-    echo "VSCode desktop file already exists, skipping."
-fi
-
-# Final Nix environment activation
-if [ -f ~/.nix-profile/etc/profile.d/nix.sh ]; then
-    source ~/.nix-profile/etc/profile.d/nix.sh
-else
-    echo "Failed to activate Nix environment."
-    exit 1
-fi
+# Calculate the space used during installation
+space_used_kb=$((initial_space_kb - final_space_kb))
+space_used_mb=$(convert_to_mb $space_used_kb)
+echo "Space used by the installation: $space_used_mb MB"
 
 echo "Nix installation and configuration complete."
 echo "To install packages with Nix use:"
 echo "nix-env -iA nixpkgs.htop"
 echo "To uninstall packages with Nix use:"
 echo "nix-env -e package_name"
-nix-env -iA nixpkgs.htop
