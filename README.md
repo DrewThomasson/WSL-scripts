@@ -5,6 +5,7 @@ Repo for public use
 steam deck tail scale script repo:
 
 https://github.com/tailscale-dev/deck-tailscale
+    - gui for tailscale for steam deck is called `Trayscale`
 
 
 steam deck brew install guide:
