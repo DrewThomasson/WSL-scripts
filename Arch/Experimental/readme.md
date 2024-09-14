@@ -272,3 +272,34 @@ sudo pacman-key --gpgdir "$USERROOT/etc/pacman.d/gnupg" --lsign-key AF1D2199EF0A
 sudo pacman-key --gpgdir "$USERROOT/etc/pacman.d/gnupg" --recv-keys 3056513887B78AEB
 sudo pacman-key --gpgdir "$USERROOT/etc/pacman.d/gnupg" --lsign-key 3056513887B78AEB
 
+
+
+
+
+
+
+
+if you ever get anything like cannot find or
+
+
+bash```
+(deck@steamdeck ~)$ pacman_ -S leafpad
+error: failed to initialize alpm library:
+(root: --config, dbpath: /usr/lib/holo/pacmandb/)
+could not find or read directory
+
+
+```
+
+
+
+then run this command should fix ti by addding this at the end of the bashrc file 
+
+bash```
+
+
+echo 'alias pacman_="sudo pacman -r $USERROOT --gpgdir $USERROOT/etc/pacman.d/gnupg"' >> ~/.bashrc
+
+
+```
+then just reinit the bash file with source ~/.bashrc or just aiunch a new terminal window
