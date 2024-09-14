@@ -238,3 +238,37 @@ exit 0
 ---
 
 Feel free to run these scripts, and they should automate the entire process described in the guide. If you have any questions or need further assistance, don't hesitate to ask!
+
+
+
+
+
+
+
+
+
+
+
+
+
+alias pacman_="sudo pacman -r $USERROOT --gpgdir $USERROOT/etc/pacman.d/gnupg"
+source ~/.bashrc
+export LD_LIBRARY_PATH=$USERROOT/usr/lib:$USERROOT/lib:$USERROOT/lib64:$LD_LIBRARY_PATH
+source ~/.bashrc
+
+
+pacman_ -Sy  # To sync the package databases
+
+# Initialize the keyring
+sudo pacman-key --gpgdir "$USERROOT/etc/pacman.d/gnupg" --init
+
+# Populate the keyring
+sudo pacman-key --gpgdir "$USERROOT/etc/pacman.d/gnupg" --populate archlinux
+
+# Import and locally sign keys
+sudo pacman-key --gpgdir "$USERROOT/etc/pacman.d/gnupg" --recv-keys AF1D2199EF0A3CCF
+sudo pacman-key --gpgdir "$USERROOT/etc/pacman.d/gnupg" --lsign-key AF1D2199EF0A3CCF
+
+sudo pacman-key --gpgdir "$USERROOT/etc/pacman.d/gnupg" --recv-keys 3056513887B78AEB
+sudo pacman-key --gpgdir "$USERROOT/etc/pacman.d/gnupg" --lsign-key 3056513887B78AEB
+
