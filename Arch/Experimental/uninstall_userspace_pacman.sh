@@ -36,11 +36,11 @@ sed -i '/export USERROOT=/d' "$BASHRC"
 
 # Remove PATH modification from .bashrc
 echo "Removing PATH modification from $BASHRC..."
-sed -i "\|export PATH=.*\"$USERROOT/usr/bin\"|d" "$BASHRC"
+sed -i "\|export PATH=.*$USERROOT/usr/bin|d" "$BASHRC"
 
 # Remove LD_LIBRARY_PATH modification from .bashrc
 echo "Removing LD_LIBRARY_PATH modification from $BASHRC..."
-sed -i "\|export LD_LIBRARY_PATH=.*\"$USERROOT/lib\"|d" "$BASHRC"
+sed -i "\|export LD_LIBRARY_PATH=.*$USERROOT/usr/lib|d" "$BASHRC"
 
 # Inform user to reload shell
 echo -e "\nUninstallation complete."
