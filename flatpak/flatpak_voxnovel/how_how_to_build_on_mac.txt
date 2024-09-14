@@ -1,0 +1,13 @@
+# In order to bash into the existing docker image cause youve already built it run this command:
+
+
+docker build --platform linux/amd64 -it flatpak-builder-image .
+
+
+docker run -it flatpak-builder-image bash
+
+
+
+#The whole point of this is to try building VoxNovel in a flatpak to make it easier to put on
+# other linux Distros with a simple apt-get install or something like that
+
